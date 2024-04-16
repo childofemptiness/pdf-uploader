@@ -7,7 +7,8 @@
     "require": {
         "php": "^8.1",
         "laravel/lumen-framework": "^10.0",
-        "mhetreramesh/flysystem-backblaze": "^1.1"
+        "mhetreramesh/flysystem-backblaze": "^1.1",
+        "obregonco/backblaze-b2": "^1.1"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

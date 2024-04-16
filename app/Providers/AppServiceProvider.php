@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Services\BackblazeService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -14,5 +15,9 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         //
+        $this->app->singleton(BackblazeService::class, function ($app) {
+
+            return new BackblazeService();
+        });
     }
 }
