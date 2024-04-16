@@ -3,8 +3,9 @@
 namespace App\Services;
 
 use obregonco\B2\Client;
-use obregonco\B2\Access\Capabilities;
 use GuzzleHttp\Exception\ClientException;
+use obregonco\B2\Access\Capabilities;
+
 class BackblazeService {
     public $retryDelay = 1;
     protected $client;
