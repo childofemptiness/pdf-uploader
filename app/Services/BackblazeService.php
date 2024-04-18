@@ -3,76 +3,35 @@
 namespace App\Services;
 
 use obregonco\B2\Client;
-use GuzzleHttp\Exception\ClientException;
-use obregonco\B2\Access\Capabilities;
 
 class BackblazeService {
     public $retryDelay = 1;
-    protected $client;
+    protected $client = null;
 
-    public function __construct() {
+    public function getClient() {
 
-        $this->client = new Client(env('BACKBLAZE_ACCOUNT_ID'), [
+       if ($this->client === null) {
 
-            'keyId' => env('BACKBLAZE_KEY_ID'),
+           $this->client = new Client(env('BACKBLAZE_ACCOUNT_ID'), [
 
-            'applicationKey' => env('BACKBLAZE_APPLICATION_KEY'),
+               'keyId' => env('BACKBLAZE_KEY_ID'),
+
+               'applicationKey' => env('BACKBLAZE_APPLICATION_KEY'),
+           ]);
+       }
+
+       return $this->client;
+   }
+
+  public function upload(string $fileName, string $contents) {
+
+        $this->getClient()->upload([
+
+            'BucketName' => env('BACKBLAZE_BUCKET_NAME'),
+
+            'FileName' => $fileName,
+
+            'Body' => $contents,
         ]);
-    }
-    public function upload(string $fileName, string $contents) {
-
-        try {
-
-            $this->client->upload([
-
-                'BucketName' => env('BACKBLAZE_BUCKET_NAME'),
-    
-                'FileName' => $fileName,
-    
-                'Body' => $contents,
-            ]);
-        } catch (ClientException $e) {
-
-            if ($e->getCode() == 401) {
-
-                $this->refreshToken();
-
-                return $this->upload($fileName, $contents);
-
-            }
-
-            elseif (in_array($e->getCode(), [408, 429, 503])) {
-
-                sleep($this->retryDelay);
-
-                $this->retryDelay *= 2;
-
-                return $this->upload($fileName, $contents);
-            }
-
-            else return false;
-        }
-    }
-
-    public function refreshToken() {
-        
-        $name = $_ENV['APP_NAME'];
-
-        $key = $this->client->createKey($name, new Capabilities([
-
-            Capabilities::DELETE_BUCKETS,
-
-            Capabilities::LIST_ALL_BUCKET_NAMES,
-
-            Capabilities::READ_BUCKETS
-        ]));
-        
-        $keyId = $key->getKeyId();
-        
-        $applicationKey = $key->getApplicationKey();
-
-        $_ENV['BACKBLAZE_KEY_ID'] = $keyId;
-
-        $_ENV['BACKBLAZE_APPLICATION_KEY'] = $applicationKey;
     }
 }

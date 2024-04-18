@@ -13,8 +13,9 @@
 |
 */
 
-$router->get('/', function () use ($router) {
-    return $router->app->version();
+$router->get('/', function () {
+
+    return view('index');
 });
 
 $router->post('/upload', 'UploadController@upload');
