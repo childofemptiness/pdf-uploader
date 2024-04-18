@@ -35,7 +35,7 @@ class UploadController extends Controller {
     
         $contents = file_get_contents($file->getRealPath());
         
-        $this->backblazeService->upload($fileName, $contents);
+        $this->backblazeService->uploadFile($fileName, $contents);
         
         return response()->json(['message' => 'File uploaded successfully']);
     }  
